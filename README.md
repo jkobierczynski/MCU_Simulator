@@ -4,9 +4,9 @@ A browser-based simulator for Arduino, ESP32 and ESP8266 boards. Write a sketch,
 
 It's a single self-contained HTML file of about 225 KB. There's nothing to install, it needs no server or build step and it makes no network requests, so it works offline.
 
-**▶ Live demo:** https://jkobierczynski.github.io/REPO_NAME/Arduino_ESP32_Simulator.html
+**▶ Live demo:** https://jurgenkobierczynski.com/MCU_Simulator/Arduino_ESP32_Simulator.html
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshot_MCU_Simulator.jpg)
 
 ---
 
