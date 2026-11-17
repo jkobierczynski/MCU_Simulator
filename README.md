@@ -2,7 +2,7 @@
 
 A browser-based simulator for Arduino, ESP32 and ESP8266 boards. Write a sketch, wire up modules and press **Run**. You can also load a compiled `.hex` file and run it on an emulated ATmega328P.
 
-It's a single self-contained HTML file of about 225 KB. There's nothing to install, it needs no server or build step and it makes no network requests, so it works offline.
+It's a single self-contained HTML file of about 260 KB. There's nothing to install, it needs no server or build step, and it works offline. A Content-Security-Policy blocks all network access, including from sketches you paste in (see [Security](#security)).
 
 **▶ Live demo:** https://jurgenkobierczynski.com/MCU_Simulator/Arduino_ESP32_Simulator.html
 
@@ -23,6 +23,7 @@ It's a single self-contained HTML file of about 225 KB. There's nothing to insta
 - **Pins table** with live mode, level, PWM duty, tone frequency, servo angle and analog voltage
 - **Buzzer sound** through Web Audio
 - **Simulation speed** from 0.25× to 5×
+- **Sandboxed sketches:** user code runs in an isolated worker, with network access blocked
 - **Autosave:** your code and wiring are kept in the browser per board
 
 ## Supported boards
@@ -83,6 +84,18 @@ These modules need a protocol-level device model and work in sketch mode only: N
 3. Drop the file on the panel, or click *Choose file…*, then press **Run**.
 
 A tiny hand-assembled `blink.hex` is built in for a quick test.
+
+## Security
+
+A sketch is code: sketch mode translates it to JavaScript and runs it. A shared sketch can't touch the page or your data, because it is isolated two ways:
+
+- **Isolated Web Worker:** every run starts a fresh, dedicated Web Worker. A worker has no access to the page DOM, cookies or `localStorage`, and it can't navigate the page. Before any sketch code runs, the worker also removes network and storage APIs (`fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `importScripts`, `indexedDB`, `caches`, `BroadcastChannel`, nested workers). **Stop** terminates the worker.
+- **Content-Security-Policy:** the page ships a strict CSP (`default-src 'none'`, `connect-src 'none'`, `img-src data: blob:`, `form-action 'none'` …). The worker inherits it, so nothing in the page or a sketch can reach the network, load remote scripts or images, or submit forms.
+- **Data only between the two:** the worker and the page exchange plain data (pin states, display contents, serial text). The page validates that data and renders it as text, never as HTML.
+
+HEX mode never executes JavaScript from the user. The `.hex` file is only data, interpreted instruction by instruction by the AVR emulator.
+
+Found a problem? Please open an issue.
 
 ## Running locally
 
